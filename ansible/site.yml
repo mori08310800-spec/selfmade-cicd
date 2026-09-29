@@ -1,6 +1,6 @@
 ---
 - name: Configure LAMP application server
-  hosts: ?
+  hosts: app
   become: true
   vars:
     db_name: task_app
