@@ -1,0 +1,11 @@
+<?php
+$db_host = 'localhost';
+$db_name = '{{ db_name }}';
+$db_user = '{{ db_user }}';
+$db_pass = '{{ db_password }}';
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+if ($conn->connect_error) {
+    http_response_code(500);
+    exit('DB_CONNECTION_FAILED');
+}
+$conn->set_charset('utf8mb4');

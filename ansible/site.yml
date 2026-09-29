@@ -1,0 +1,74 @@
+---
+- name: Configure LAMP application server
+  hosts: app
+  become: true
+  vars:
+    db_name: task_app
+    db_user: taskapp
+  tasks:
+    - name: Install LAMP packages
+      ansible.builtin.dnf:
+        name: [httpd, php, php-fpm, php-mysqli, mariadb105-server]
+        state: present
+    - name: Enable and start Apache
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+    - name: Enable and start PHP-FPM
+      ansible.builtin.service:
+        name: php-fpm
+        state: started
+        enabled: true
+    - name: Enable and start MariaDB
+      ansible.builtin.service:
+        name: mariadb
+        state: started
+        enabled: true
+    - name: Deploy database initialization SQL
+      ansible.builtin.template:
+        src: init.sql.j2
+        dest: /root/selfmade-init.sql
+        owner: root
+        group: root
+        mode: '0600'
+      no_log: true
+    - name: Initialize database once
+      ansible.builtin.shell: mysql < /root/selfmade-init.sql
+      args:
+        creates: /var/lib/mysql/.task_app_initialized
+      register: db_init
+      no_log: true
+    - name: Mark successful DB initialization
+      ansible.builtin.file:
+        path: /var/lib/mysql/.task_app_initialized
+        state: touch
+        mode: '0600'
+      when: db_init.changed
+    - name: Remove temporary SQL with credential
+      ansible.builtin.file:
+        path: /root/selfmade-init.sql
+        state: absent
+      no_log: true
+    - name: Deploy PHP DB config
+      ansible.builtin.template:
+        src: config.php.j2
+        dest: /var/www/html/config.php
+        owner: apache
+        group: apache
+        mode: '0640'
+      no_log: true
+      notify: Restart Apache
+    - name: Deploy application files
+      ansible.builtin.copy:
+        src: '{{ playbook_dir }}/../app/'
+        dest: /var/www/html/
+        owner: apache
+        group: apache
+        mode: '0644'
+      notify: Restart Apache
+  handlers:
+    - name: Restart Apache
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
