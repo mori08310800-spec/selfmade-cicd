@@ -59,7 +59,7 @@ $remainingCount = $totalCount - $doneCount;
       overflow: hidden;
       background:
         radial-gradient(circle at 76% 20%, rgba(255, 244, 195, .95), transparent 24%),
-        linear-gradient(155deg, #ffd6e7 0%, #ffb8d2 54%, #ffe4bd 100%);
+        linear-gradient(155deg, #a7d9dd 0%, #d2ece5 54%, #f6f1df 100%);
     }
 
     .sky::after {
@@ -435,7 +435,7 @@ $remainingCount = $totalCount - $doneCount;
 
       <div class="hero">
         <p class="eyebrow">MAKE SPACE FOR WHAT MATTERS</p>
-        <h1>今日も1日<br>頑張ろう！</h1>
+        <h1>今日も<br>自分のペースで。</h1>
         <p>小さなタスクをひとつずつ。空を見上げる余裕をつくろう。</p>
       </div>
     </div>
